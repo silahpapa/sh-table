@@ -1,9 +1,18 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-
+import {computed, onMounted, reactive, ref} from 'vue'
+import {doGet} from 's-apis'
+import {showToast,confirmRequest} from 's-alert'
 defineProps<{ msg: string }>()
 
-const count = ref(0)
+let posts = ref([])
+
+onMounted(async () => {
+  const response = await doGet('https://jsonplaceholder.typicode.com/posts')
+  posts.value = response.data
+  showToast('testing','success','top-start',3000)
+  confirmRequest('testing','are you sure kapss','Red alder',[{user_id:23}])
+})
+
 </script>
 <template>
   <div class="container">
@@ -12,28 +21,17 @@ const count = ref(0)
         <thead>
         <tr>
           <th scope="col">#</th>
-          <th scope="col">First</th>
-          <th scope="col">Last</th>
-          <th scope="col">Handle</th>
+          <th scope="col">title</th>
+          <th scope="col">Body</th>
+          <th scope="col">Action</th>
         </tr>
         </thead>
         <tbody>
-        <tr>
-          <th scope="row">1</th>
-          <td>Mark</td>
-          <td>Otto</td>
-          <td>@mdo</td>
-        </tr>
-        <tr>
-          <th scope="row">2</th>
-          <td>Jacob</td>
-          <td>Thornton</td>
-          <td>@fat</td>
-        </tr>
-        <tr>
-          <th scope="row">3</th>
-          <td colspan="2">Larry the Bird</td>
-          <td>@twitter</td>
+        <tr v-for="post in posts" :key="post.id">
+          <th scope="row">{{post.id}}</th>
+          <td>{{post.title}}</td>
+          <td>{{post.body}}</td>
+          <td>edit</td>
         </tr>
         </tbody>
       </table>
